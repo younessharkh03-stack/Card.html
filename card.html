@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>متجر الخدمات الرقمية - الدفع المباشر</title>
+  <title>YS Store</title>
   
   <!-- خط Cairo للعربية -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,22 +40,17 @@
       margin: 0 auto;
     }
 
+    /* تنسيق اللوجو الجديد */
     .header-title {
       text-align: center;
       margin-bottom: 30px;
     }
 
-    .header-title h1 {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 8px 0;
-      color: #2b2823;
-    }
-
-    .header-title p {
-      font-size: 14px;
-      color: #666;
-      margin: 0;
+    .store-logo {
+      max-width: 220px; /* حجم اللوجو - تقدر تغيره إذا بدك ياه أكبر أو أصغر */
+      height: auto;
+      display: block;
+      margin: 0 auto;
     }
 
     /* شبكة المنتجات */
@@ -298,9 +293,9 @@
 <body>
 
   <div class="container">
+    <!-- اللوجو بدال النص -->
     <div class="header-title">
-      <h1>متجر الاشتراكات الرقمية 🛍️</h1>
-      <p>دفع آمن وسريع عبر البطاقات البنكية و Apple Pay</p>
+      <img src="logo.png" alt="YS Store" class="store-logo">
     </div>
 
     <div class="grid" id="productsGrid"></div>
@@ -337,7 +332,7 @@
   </div>
 
   <script>
-    // 📦 قائمة المنتجات - هنا ستضع روابط الدفع الخاصة بك من Lemon Squeezy لاحقاً
+    // 📦 قائمة المنتجات - الروابط هنا جاهزة لتحط بدالها روابط ليمون سكويزي
     const products = [
       {
         title: "اشتراك اكس بريميوم",
@@ -463,11 +458,9 @@
         return;
       }
 
-      // يتم أخذ الرابط المخصص للباقة المختارة ودمج معلومات الزبون معه
       const baseCheckoutUrl = selectedOption.link;
       const finalUrl = `${baseCheckoutUrl}?custom[user_data]=${encodeURIComponent(userValue)}`;
       
-      // التوجيه لصفحة الدفع
       window.location.href = finalUrl;
     }
   </script>

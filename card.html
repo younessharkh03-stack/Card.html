@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر الخدمات الرقمية - الدفع المباشر</title>
+  
+  <!-- خط Cairo للعربية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #f7f4ef;          
+      --card-bg: #ffffff;            
+      --text-color: #2c2c2c;        
+      --accent-color: #000000;       
+      --badge-bg: rgba(0, 0, 0, 0.75);
+      --border-color: #e2ddd3;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 24px 16px;
+      direction: rtl;
+      text-align: right;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header-title {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: #2b2823;
+    }
+
+    .header-title p {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+
+    /* شبكة المنتجات */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .img-container {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #eae5dc;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 10px;
+    }
+
+    .image-badge {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--badge-bg);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 2px;
+      text-align: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      margin: 4px 0 6px 0;
+      color: #2b2823;
+      font-weight: 700;
+    }
+
+    .card .starting-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: #d97706;
+    }
+
+    /* النافذة المنبثقة (Modal) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-content {
+      background: #faf8f5;
+      width: 100%;
+      max-width: 500px;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-top: 1px solid var(--border-color);
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; }
+
+    .close-btn {
+      background: #e2ddd3;
+      border: none;
+      color: #444;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .close-btn:hover { background: #d4cec2; }
+
+    .modal-img-container {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      background-color: #eae5dc;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 12px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .options-label {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .option-card {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-card.selected {
+      border-color: #0088cc;
+      background: #f0f8ff;
+    }
+
+    .option-title { font-size: 14px; font-weight: 700; }
+    .option-price { font-weight: 700; color: #d97706; font-size: 14px; }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 15px;
+      background: #ffffff;
+      outline: none;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .input-group input:focus {
+      border-color: #0088cc;
+    }
+
+    .buy-btn {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 12px;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .buy-btn:active { opacity: 0.85; transform: scale(0.98); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-title">
+      <h1>متجر الاشتراكات الرقمية 🛍️</h1>
+      <p>دفع آمن وسريع عبر البطاقات البنكية و Apple Pay</p>
+    </div>
+
+    <div class="grid" id="productsGrid"></div>
+  </div>
+
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">اسم المنتج</h3>
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-img-container">
+        <img id="modalImg" src="" alt="">
+        <div class="image-badge" id="modalBadge"></div>
+      </div>
+
+      <div id="modalDesc" class="modal-desc"></div>
+
+      <div id="optionsSection">
+        <div class="options-label">اختر الباقة المناسبة:</div>
+        <div class="options-grid" id="modalOptions"></div>
+      </div>
+
+      <div class="input-group">
+        <label id="inputLabel">معلومات الحساب:</label>
+        <input type="text" id="userInput" placeholder="">
+      </div>
+
+      <button class="buy-btn" id="modalBuyBtn" onclick="submitPurchase()">
+        <span>ادفع الآن</span> 💳
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 📦 قائمة المنتجات - هنا ستضع روابط الدفع الخاصة بك من Lemon Squeezy لاحقاً
+    const products = [
+      {
+        title: "اشتراك اكس بريميوم",
+        badge: "عن طريق يوزر الحساب فقط",
+        desc: "تفعيل التوثيق الزرقاء، زيادة وصول المنشورات، وتعديل التغريدات.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg",
+        inputType: "username",
+        inputLabel: "أدخل اسم المستخدم (اليوزر):",
+        inputPlaceholder: "@example",
+        options: [
+          { label: "3 شهور", price: "$25.00", link: "https://your-store.lemonsqueezy.com/checkout/buy/LINK_1" },
+          { label: "6 شهور", price: "$45.00", link: "https://your-store.lemonsqueezy.com/checkout/buy/LINK_2" }
+        ]
+      },
+      {
+        title: "يوتيوب بريميوم",
+        badge: "يفعل على ايميلك الشخصي",
+        desc: "مشاهدة بدون إعلانات مع تشغيل في الخلفية واشتراك YouTube Music.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/YouTube_Premium_logo.svg",
+        inputType: "email",
+        inputLabel: "أدخل البريد الإلكتروني (الإيميل):",
+        inputPlaceholder: "example@gmail.com",
+        options: [
+          { label: "شهر واحد", price: "$4.00", link: "https://your-store.lemonsqueezy.com/checkout/buy/LINK_3" },
+          { label: "سنة كاملة", price: "$30.00", link: "https://your-store.lemonsqueezy.com/checkout/buy/LINK_4" }
+        ]
+      },
+      {
+        title: "جيميني برو 18 شهر",
+        badge: "يفعل على ايميلك الشخصي",
+        desc: "وصول كامل لأحدث نماذج Google Gemini Advanced مع مساحة سحابية.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg",
+        inputType: "email",
+        inputLabel: "أدخل البريد الإلكتروني (الإيميل):",
+        inputPlaceholder: "example@gmail.com",
+        options: [
+          { label: "اشتراك 18 شهر", price: "$35.00", link: "https://your-store.lemonsqueezy.com/checkout/buy/LINK_5" }
+        ]
+      }
+    ];
+
+    let selectedProduct = null;
+    let selectedOption = null;
+
+    const grid = document.getElementById('productsGrid');
+    products.forEach((p, index) => {
+      const startPrice = p.options[0].price;
+      grid.innerHTML += `
+        <div class="card" onclick="openModal(${index})">
+          <div class="img-container">
+            <img src="${p.img}" alt="${p.title}">
+            <div class="image-badge">${p.badge}</div>
+          </div>
+          <h3>${p.title}</h3>
+          <div class="starting-price">يبدأ من ${startPrice}</div>
+        </div>
+      `;
+    });
+
+    function openModal(index) {
+      selectedProduct = products[index];
+      selectedOption = selectedProduct.options[0];
+
+      document.getElementById('modalTitle').innerText = selectedProduct.title;
+      document.getElementById('modalImg').src = selectedProduct.img;
+      document.getElementById('modalBadge').innerText = selectedProduct.badge;
+      document.getElementById('modalDesc').innerText = selectedProduct.desc;
+
+      document.getElementById('inputLabel').innerText = selectedProduct.inputLabel;
+      const inputEl = document.getElementById('userInput');
+      inputEl.value = '';
+      inputEl.placeholder = selectedProduct.inputPlaceholder;
+
+      const optionsSection = document.getElementById('optionsSection');
+      if (selectedProduct.options.length > 1) {
+        optionsSection.style.display = "block";
+        renderOptions();
+      } else {
+        optionsSection.style.display = "none";
+        updateBuyButton();
+      }
+
+      document.getElementById('productModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').classList.remove('active');
+    }
+
+    function renderOptions() {
+      const optionsContainer = document.getElementById('modalOptions');
+      optionsContainer.innerHTML = '';
+
+      selectedProduct.options.forEach((opt, idx) => {
+        const isSelected = selectedOption.label === opt.label;
+        optionsContainer.innerHTML += `
+          <div class="option-card ${isSelected ? 'selected' : ''}" onclick="selectOption(${idx})">
+            <span class="option-title">${opt.label}</span>
+            <span class="option-price">${opt.price}</span>
+          </div>
+        `;
+      });
+
+      updateBuyButton();
+    }
+
+    function selectOption(idx) {
+      selectedOption = selectedProduct.options[idx];
+      renderOptions();
+    }
+
+    function updateBuyButton() {
+      document.getElementById('modalBuyBtn').innerHTML = `
+        <span>شراء (${selectedOption.label}) بـ ${selectedOption.price}</span> 💳
+      `;
+    }
+
+    function submitPurchase() {
+      const userValue = document.getElementById('userInput').value.trim();
+
+      if (!userValue) {
+        alert(selectedProduct.inputType === 'username' ? 'يرجى إدخال اسم المستخدم (اليوزر) أولاً!' : 'يرجى إدخال البريد الإلكتروني (الإيميل) أولاً!');
+        return;
+      }
+
+      // يتم أخذ الرابط المخصص للباقة المختارة ودمج معلومات الزبون معه
+      const baseCheckoutUrl = selectedOption.link;
+      const finalUrl = `${baseCheckoutUrl}?custom[user_data]=${encodeURIComponent(userValue)}`;
+      
+      // التوجيه لصفحة الدفع
+      window.location.href = finalUrl;
+    }
+  </script>
+</body>
+</html>
